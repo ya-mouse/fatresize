@@ -34,6 +34,12 @@
 
 #include "config.h"
 
+#ifdef LIBPARTED_GT_2_4
+#define FAT_ASSERT(cond, action) PED_ASSERT(cond)
+#else
+#define FAT_ASSERT(cond, action) PED_ASSERT(cond, action)
+#endif
+
 #define FAT32MIN	1024*1024*512
 
 static struct {
@@ -217,7 +223,7 @@ fatresize_handler(PedException *ex)
 static int
 snap(PedSector* sector, PedSector new_sector, PedGeometry* range)
 {
-    PED_ASSERT(ped_geometry_test_sector_inside (range, *sector), return 0);
+    FAT_ASSERT(ped_geometry_test_sector_inside (range, *sector), return 0);
     if (!ped_geometry_test_sector_inside(range, new_sector))
 	return 0;
 
@@ -281,7 +287,7 @@ snap_to_boundaries (PedGeometry* new_geom, PedGeometry* old_geom,
 			  end_part->geom.end, end_part->geom.start - 1, -1);
 	}
 
-	PED_ASSERT (start <= end, return);
+	FAT_ASSERT (start <= end, return);
 	ped_geometry_set (new_geom, start, end - start + 1);
 }
 
