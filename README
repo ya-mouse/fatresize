@@ -41,4 +41,4 @@ You can't resize FAT32 partition lesser than 512Mb because Windows(R) doesn't
 work properly with small FAT32 file system. Use FAT16.
 
 
-Please report bugs to Anton D. Kachalov <mouse at altlinux dot org>
+Please report bugs to Anton D. Kachalov <mouse at ya dot ru>

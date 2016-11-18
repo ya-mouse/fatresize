@@ -1,6 +1,6 @@
 /*
   $Id: fatresize.c,v 1.6 2005/09/09 12:57:39 siome_tajshe Exp $
-  Copyright (C) 2005  Anton D. Kachalov <mouse@altlinux.org>
+  Copyright (C) 2005  Anton D. Kachalov <mouse@ya.ru>
 
   The FAT16/FAT32 non-destructive resizer.
 
