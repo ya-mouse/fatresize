@@ -1,12 +1,18 @@
+planned 1.0.3:
+ - change license from GPLv2+ to GPLv3
+ - merge changes from Philippe Coval <rzr>
+ - merge changes from Colin Watson <cjwatson>
+
 version 1.0.2:
-- tell k|M|G and ki|Mi|Gi suffixes
-- proper filesystem information
-- added default name translation of EVMS partitions
-- synced resize code with new cmd-line parted utility 1.6.24
-- restore original partition geometry while resizing EVMS partition
- 
+ - tell k|M|G and ki|Mi|Gi suffixes
+ - proper filesystem information
+ - added default name translation of EVMS partitions
+ - synced resize code with new cmd-line parted utility 1.6.24
+ - restore original partition geometry while resizing EVMS partition
+ - LFS support
+
 version 1.0.1:
-- fix new geometry boundary
+ - fix new geometry boundary
 
 version 1.0:
-- first release
+ - first release

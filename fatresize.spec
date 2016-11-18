@@ -2,7 +2,7 @@ Name: fatresize
 Version: 1.0.2
 Release: alt4
 
-License: GPL
+License: GPLv3
 Group: File tools
 Summary: The FAT16/FAT32 non-destructive resizer.
 URL: http://sourceforge.net/projects/fatresize/
