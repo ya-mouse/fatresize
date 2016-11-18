@@ -7,7 +7,11 @@ AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
 dnl set some basic variables
-BUILD_DATE="`date '+%D'`"
+if test -n "$SOURCE_DATE_EPOCH"; then
+	BUILD_DATE=$(date -u -d "@$SOURCE_DATE_EPOCH" "+%D" 2>/dev/null || date -u -r "$SOURCE_DATE_EPOCH" "+%D" 2>/dev/null || date -u "+%D")
+else
+	BUILD_DATE=$(date "+$DATE_FMT")
+fi
 AC_DEFINE_UNQUOTED(BUILD_DATE, "$BUILD_DATE", [The date of the build.])
 
 # Check for programs.
