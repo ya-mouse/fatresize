@@ -29,8 +29,7 @@ CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=${ac_cv_sys_file_offset_bits}"
 dnl libparted
 # hack
 LIBS="$LIBS -ldl"
-PARTED_CHECK_LIBPARTED(1.6.0, ,
-	[AC_MSG_ERROR([*** libparted >= 1.6.0 not installed - please install first ***])])
+PKG_CHECK_MODULES([PARTED], [libparted >= 1.6.0])
 
 AC_SUBST(PARTED_LIBS)
 
