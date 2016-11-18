@@ -1,0 +1,44 @@
+Compilation
+===========
+
+Requirements:
+ - autoconf >= 2.5
+ - parted >= 1.6.24
+ - e2fsprogs (uuid) >= 1.30
+
+From tarball:
+-------------
+Just run configure script with neccessary parameters
+
+From CVS:
+---------
+You need /usr/share/aclocal/parted.m4 file from parted distribution.
+Run autoreconf -fisv and then run configure script
+
+
+Using
+=====
+fatresize [options] device (e.g. /dev/hda2, /dev/evms/sda3)
+    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes
+    -i, --info         Show volume information
+    -p, --progress     Show progress of resizing
+    -q, --quite        Be quite
+    -v, --verbose      Verbose mode
+    -h, --help         Display help screen
+
+Example:
+fatresize -s 2G /dev/evms/hdb2
+fatresize -q -s 3G /dev/hde6
+fatresize -i /dev/hdg3
+
+Size and device is required to run.
+You can resize device-mapped partitions, e.g. EVMS partitions.
+
+
+Note
+====
+You can't resize FAT32 partition lesser than 512Mb because Windows(R) doesn't
+work properly with small FAT32 file system. Use FAT16.
+
+
+Please report bugs to Anton D. Kachalov <mouse at altlinux dot org>
