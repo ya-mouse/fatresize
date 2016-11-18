@@ -1,5 +1,5 @@
 AC_PREREQ(2.50)
-AC_INIT(fatresize, 1.0.2, [mouse@ya.ru])
+AC_INIT(fatresize, 1.0.3, [mouse@ya.ru])
 
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
