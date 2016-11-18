@@ -276,15 +276,17 @@ snap_to_boundaries (PedGeometry* new_geom, PedGeometry* old_geom,
 	if (old_geom) {
 		try_snap (&start, start_range,
 			  old_geom->start, start_part->geom.start,
-			  start_part->geom.end + 1, -1);
+			  start_part->geom.end + 1, (PedSector)-1);
 		try_snap (&end, end_range,
 			  old_geom->end, end_part->geom.end,
-			  end_part->geom.start - 1, -1);
+			  end_part->geom.start - 1, (PedSector)-1);
 	} else {
 		try_snap (&start, start_range,
-			  start_part->geom.start, start_part->geom.end + 1, -1);
+			  start_part->geom.start,
+			  start_part->geom.end + 1, (PedSector)-1);
 		try_snap (&end, end_range,
-			  end_part->geom.end, end_part->geom.start - 1, -1);
+			  end_part->geom.end,
+			  end_part->geom.start - 1, (PedSector)-1);
 	}
 
 	FAT_ASSERT (start <= end, return);
