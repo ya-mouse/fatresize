@@ -135,11 +135,11 @@ Show volume information
 
       <varlistentry>
         <term><option>-q</option>
-          <option>--quite</option>
+          <option>--quiet</option>
         </term>
         <listitem>
          <para>
- Be quite
+ Be quiet
 
 </para>
         </listitem>
