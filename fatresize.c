@@ -66,7 +66,7 @@ usage(int code)
 		    "    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes\n"
 		    "    -i, --info         Show volume information\n"
 		    "    -p, --progress     Show progress\n"
-		    "    -q, --quite        Be quite\n"
+		    "    -q, --quiet        Be quiet\n"
 		    "    -v, --verbose      Verbose\n"
 		    "    -h, --help         Display this help\n\n"
 		    "Please report bugs to %s\n",
@@ -361,7 +361,7 @@ main(int argc, char **argv)
 	{"progress",	no_argument,		NULL, 'p'},
 	{"size",	required_argument,	NULL, 's'},
 	{"verbose",	no_argument,		NULL, 'v'},
-	{"quite",	no_argument,		NULL, 'q'},
+	{"quiet",	no_argument,		NULL, 'q'},
 	{NULL, 0, NULL, 0}
     };
 

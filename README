@@ -22,7 +22,7 @@ fatresize [options] device (e.g. /dev/hda2, /dev/evms/sda3)
     -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes
     -i, --info         Show volume information
     -p, --progress     Show progress of resizing
-    -q, --quite        Be quite
+    -q, --quiet        Be quiet
     -v, --verbose      Verbose mode
     -h, --help         Display help screen
 
