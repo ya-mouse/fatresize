@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
@@ -40,6 +41,7 @@
 #endif
 
 #define FAT32MIN	1024*1024*512
+#define MAX_SIZE_STR	"max"
 
 static struct {
     unsigned char *dev;
@@ -63,7 +65,8 @@ usage(int code)
 {
     fprintf(stdout, "Usage: %s [options] device (e.g. /dev/hda1, /dev/sda2)\n"
 		    "    Resize an FAT16/FAT32 volume non-destructively:\n\n"
-		    "    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes\n"
+		    "    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes or \""
+		    MAX_SIZE_STR "\"\n"
 		    "    -i, --info         Show volume information\n"
 		    "    -p, --progress     Show progress\n"
 		    "    -q, --quiet        Be quiet\n"
@@ -94,6 +97,9 @@ get_size(char *s)
     PedSector size;
     char *suffix;
     int prefix_kind = 1000;
+
+    if (!strncmp(s, MAX_SIZE_STR, sizeof(MAX_SIZE_STR) - 1))
+	return LLONG_MAX;
 
     size = strtoll(s, &suffix, 10);
     if (size <= 0 || errno == ERANGE)
@@ -473,7 +479,7 @@ main(int argc, char **argv)
 	return 1;
     }
 
-    if (opts.info)
+    if (opts.info || opts.size == LLONG_MAX)
     {
 	printd(3, "ped_file_system_open()\n");
 	fs = ped_file_system_open(&part->geom);
@@ -484,7 +490,9 @@ main(int argc, char **argv)
 	constraint = ped_file_system_get_resize_constraint(fs);
 	if (!constraint)
 	    return 1;
-
+    }
+    if (opts.info)
+    {
 	printf("FAT: %s\n", part->fs_type->name);
 	printf("Size: %llu\n", fs->geom->length * dev->sector_size);
 	printf("Min size: %llu\n", (part->fs_type->name[3] == '3'
@@ -494,6 +502,11 @@ main(int argc, char **argv)
 
 	ped_constraint_destroy(constraint);
 	return 0;
+    }
+    if (opts.size == LLONG_MAX)
+    {
+	opts.size = constraint->max_size * dev->sector_size;
+	ped_constraint_destroy(constraint);
     }
 
     start = part->geom.start;

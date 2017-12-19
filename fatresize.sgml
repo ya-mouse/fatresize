@@ -103,7 +103,7 @@ manpage.1: manpage.sgml
         </term>
         <listitem>
           <para>
-Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes
+Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes or "max"
 </para>
         </listitem>
       </varlistentry>
@@ -167,7 +167,7 @@ fatresize -s 2G /dev/evms/hdb2
 </para>
 
 <para>
-fatresize -q -s 3G /dev/hde6
+fatresize -q -s max /dev/hde6
 </para>
 
 <para>
