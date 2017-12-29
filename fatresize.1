@@ -1,0 +1,60 @@
+.TH "FATRESIZE" "1" 
+.SH "NAME" 
+fatresize \(em     Resize an FAT16/FAT32 volume non-destructively 
+.SH "SYNOPSIS" 
+.PP 
+\fBfatresize\fR [\fB-s \fISIZE\fR\fP]  [device]  
+.SH "DESCRIPTION" 
+.PP 
+This manual page documents briefly the 
+\fBfatresize\fR   
+.PP 
+This manual page was written for the \fBDebian\fP distribution 
+because the original program does not have a manual page. 
+.SH "OPTIONS" 
+.PP 
+These programs follow the usual GNU command line syntax, 
+with long options starting with two dashes (`\-').  A summary of 
+options is included below.  For a complete description, see the 
+\fBInfo\fP files. 
+.IP "\fB-h\fP           \fB\-\-help\fP         " 10 
+Show summary of options. 
+.IP "\fB-s\fP           \fB\-\-size\fP         " 10 
+Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes 
+.IP "\fB-i\fP           \fB\-\-info\fP         " 10 
+Show volume information 
+.IP "\fB-p\fP           \fB\-\-progress\fP         " 10 
+Show progress 
+.IP "\fB-q\fP           \fB\-\-quite\fP         " 10 
+Be quite 
+.IP "\fB-v\fP           \fB\-\-verbose\fP         " 10 
+Verbose (not version) 
+.SH "EXAMPLES" 
+.PP 
+fatresize \-s 2G /dev/evms/hdb2 
+.PP 
+fatresize \-q \-s 3G /dev/hde6 
+.PP 
+fatresize \-i /dev/hdg3 
+.PP 
+Size and device is required to run. 
+You can resize device-mapped partitions, e.g. EVMS partitions. 
+.SH "BUGS" 
+.PP 
+You can't resize FAT32 partition lesser than 512Mb because Windows(R) doesn't 
+work properly with small FAT32 file system. Use FAT16. 
+ 
+ 
+.SH "AUTHOR" 
+.PP 
+This manual page was written by Philippe Coval rzr@gna.org for 
+the \fBDebian\fP system (but may be used by others).  Permission is 
+granted to copy, distribute and/or modify this document under 
+the terms of the GNU General Public License, Version 2 any  
+later version published by the Free Software Foundation. 
+ 
+.PP 
+On Debian systems, the complete text of the GNU General Public 
+License can be found in /usr/share/common-licenses/GPL-2. 
+ 
+.\" created by instant / docbook-to-man 
