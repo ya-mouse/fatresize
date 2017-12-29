@@ -19,7 +19,7 @@ Run autoreconf -fisv and then run configure script
 Using
 =====
 fatresize [options] device (e.g. /dev/hda2, /dev/evms/sda3)
-    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes
+    -s, --size SIZE    Resize volume to SIZE[k|M|G|ki|Mi|Gi] bytes or max
     -i, --info         Show volume information
     -p, --progress     Show progress of resizing
     -q, --quiet        Be quiet
@@ -28,7 +28,7 @@ fatresize [options] device (e.g. /dev/hda2, /dev/evms/sda3)
 
 Example:
 fatresize -s 2G /dev/evms/hdb2
-fatresize -q -s 3G /dev/hde6
+fatresize -q -s max /dev/hde6
 fatresize -i /dev/hdg3
 
 Size and device is required to run.
