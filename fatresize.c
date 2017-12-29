@@ -18,6 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* activate PED_ASSERT */
+#ifndef DEBUG
+#define DEBUG 1
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -34,7 +39,13 @@
 #include "config.h"
 
 #ifdef LIBPARTED_GT_2_4
-#define FAT_ASSERT(cond, action) PED_ASSERT(cond)
+#define FAT_ASSERT(cond, action)		\
+    do {					\
+	if (!(cond)) {				\
+	    PED_ASSERT(cond);			\
+	    action;				\
+	}					\
+    } while (0)
 #else
 #define FAT_ASSERT(cond, action) PED_ASSERT(cond, action)
 #endif
@@ -271,6 +282,9 @@ snap_to_boundaries (PedGeometry* new_geom, PedGeometry* old_geom,
 
 	start_part = ped_disk_get_partition_by_sector (disk, start);
 	end_part = ped_disk_get_partition_by_sector (disk, end);
+	FAT_ASSERT (start_part, return);
+	if (!end_part)
+	    return;
 
 	if (old_geom) {
 		try_snap (&start, start_range,
