@@ -151,9 +151,21 @@ get_partnum(char *dev)
     return pnum ? pnum : 1;
 }
 
+/* Code parts have been taken from _ped_device_probe(). */
+static void
+probe_device(PedDevice **dev, const char *path)
+{
+    ped_exception_fetch_all();
+    *dev = ped_device_get(path);
+    if (!*dev)
+	ped_exception_catch();
+    ped_exception_leave_all();
+}
+
 static char *
 get_devname(char *dev)
 {
+    PedDevice *peddev = NULL;
     char *devname;
     char *p;
 
@@ -171,6 +183,20 @@ get_devname(char *dev)
 	if (p)
 	    strcpy(p, p+5);
     }
+
+    /* check if the device really exists */
+    while (*p && *p != '/' && !peddev)
+    {
+	devname[p-dev+1] = '\0';
+	probe_device(&peddev, devname);
+	p--;
+    }
+    if (!peddev)
+    {
+	free(devname);
+	return NULL;
+    }
+    ped_device_destroy(peddev);
 
     return devname;
 }
@@ -426,7 +452,7 @@ main(int argc, char **argv)
 
     if (!opts.dev)
     {
-	fprintf(stderr, "You must specify exactly one device.\n");
+	fprintf(stderr, "You must specify exactly one existing device.\n");
 	return 1;
     }
     else if (!opts.size && !opts.info)
