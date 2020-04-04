@@ -1,4 +1,20 @@
-planned 1.0.3:
+version 1.1.0:
+ - drop support for libparted older than 2.4 (#16)
+ - introduce `-n, --partition` to set a partition number when
+   dealing with file dumps, /dev/loop and /dev/ram devices (#15)
+ - ask confirmation for operations (e.g. FAT32 -> FAT16 conversion),
+   add `-f, --force` option to not prompt (#13)
+ - do not limit FAT32 usage on small partitions (#11)
+ - update ChangeLog (#10)
+
+version 1.0.4:
+ - add Sebastian Parschauer to contributors
+ - add Patrick Chauncey to contributors
+ - fix a segfault and assert handling (#6)
+ - allow setting maximum size by keyword "max" (#5)
+ - fix getting the device name from partition name (#2)
+
+version 1.0.3:
  - change license from GPLv2+ to GPLv3
  - merge changes from Philippe Coval <rzr>
  - merge changes from Colin Watson <cjwatson>

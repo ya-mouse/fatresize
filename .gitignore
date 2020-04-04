@@ -1,0 +1,10 @@
+.deps
+autom4te.cache
+Makefile
+config.h
+config.log
+config.status
+compile
+fatresize
+fatresize-fatresize.o
+stamp-h1
