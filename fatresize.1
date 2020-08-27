@@ -39,11 +39,10 @@ fatresize \-i /dev/hdg3
 .PP 
 Size and device is required to run. 
 You can resize device-mapped partitions, e.g. EVMS partitions. 
-.SH "BUGS" 
+.SH "NOTES" 
 .PP 
-You can't resize FAT32 partition lesser than 512Mb because Windows(R) doesn't 
-work properly with small FAT32 file system. Use FAT16. 
- 
+Resizing FAT32 partitions to a size smaller than 512 MiB is supported,
+but Windows(R) is not guaranteed to work properly with them.
  
 .SH "AUTHOR" 
 .PP 
