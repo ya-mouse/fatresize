@@ -621,6 +621,11 @@ int main(int argc, char **argv) {
     opts.size = constraint->max_size * dev->sector_size;
     ped_constraint_destroy(constraint);
   }
+  if (opts.size >= dev->sector_size * part_geom.length) {
+     printf("Specified size (%llu) equals or exceeds partition size (%llu)\n",
+            opts.size, dev->sector_size * part_geom.length);
+     opts.size = (dev->sector_size * (part_geom.length - 1));
+  }
 
   start = part_geom.start;
   printd(3, "ped_geometry_new(%llu)\n", start);
