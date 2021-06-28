@@ -112,10 +112,6 @@ static PedSector get_size(char *s) {
     usage(1);
   }
 
-  if (!*suffix) {
-    return size;
-  }
-
   if (strlen(suffix) == 2 && suffix[1] == 'i') {
     prefix_kind = 1024;
   } else if (strlen(suffix) > 1) {
@@ -125,10 +121,14 @@ static PedSector get_size(char *s) {
   switch (*suffix) {
     case 'G':
       size *= prefix_kind;
+      /* fall through */
     case 'M':
       size *= prefix_kind;
+      /* fall through */
     case 'k':
       size *= prefix_kind;
+      /* fall through */
+    case '\0':
       break;
     default:
       usage(1);
