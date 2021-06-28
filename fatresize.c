@@ -576,8 +576,9 @@ int main(int argc, char **argv) {
 
     if (strncmp(part->fs_type->name, "fat", 3)) {
       ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
-                          "%s is not valid FAT16/FAT32 partition.",
-                          opts.fullpath);
+                          "%s is %s, not a valid FAT16/FAT32 partition.",
+                          opts.fullpath,
+                          part->fs_type->name);
       return 1;
     }
 
