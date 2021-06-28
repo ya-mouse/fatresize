@@ -151,18 +151,16 @@ static int get_partnum(char *dev) {
   int pnum;
   char *p;
 
-  p = dev + strlen(dev) - 1;
-  while (*p && isdigit(*p) && *p != '/') {
-    p--;
+  /* ??? what if whole name is made up of digits? */
+  for (p = dev + strlen(dev); p > dev && isdigit(p[-1]); p--) {
   }
 
-  pnum = atoi(p + 1);
+  pnum = atoi(p);
   return pnum ? pnum : 1;
 }
 
 static int get_device(char *dev) {
   PedDevice *peddev = NULL;
-  int len;
   char *devname;
   char *p;
   struct stat st;
@@ -183,19 +181,20 @@ static int get_device(char *dev) {
     return 1;
   }
 
-  len = strlen(dev);
-  p = dev + len - 1;
-  while (*p && isdigit(*p) && *p != '/') {
+  /* create devname as dev, without trailing digits */
+
+  for (p = dev + strlen(dev); p > dev && isdigit(p[-1]); p--) {
+  }
+
+  /* if the resulting name ends in <digit>p, strip the "p".  Why? */
+  if (p-dev > 2 && isdigit(p[-2]) && p[-1] == 'p') {
     p--;
   }
 
-  devname = malloc(len);
-  strncpy(devname, dev, p - dev + 1);
+  /* ??? what if no name is left? */
+  devname = malloc(p - dev + 1);
+  memcpy(devname, dev, p - dev);
   devname[p - dev + 1] = '\0';
-
-  if (p-dev > 2 && devname[p-dev] == 'p' && isdigit(devname[p-dev-1])) {
-    devname[p-dev] = '\0';
-  }
 
   peddev = NULL;
   probe_device(&peddev, devname);
