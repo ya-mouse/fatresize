@@ -50,8 +50,8 @@
 #define MAX_SIZE_STR "max"
 
 static struct {
-  unsigned char *fullpath;
-  unsigned char *device;
+  char *fullpath;
+  char *device;
   int pnum;
   PedSector size;
   int verbose;
