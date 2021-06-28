@@ -453,7 +453,7 @@ int main(int argc, char **argv) {
   int opt;
 
   PedDevice *dev;
-  PedDisk *disk;
+  PedDisk *disk = NULL;	/* initialized to avoid GCC warning */
   PedPartition *part;
   PedTimer *timer = NULL;
 
@@ -590,6 +590,7 @@ int main(int argc, char **argv) {
     if (!ped_geometry_init(&part_geom, dev, 0, dev->length)) {
       return 1;
     }
+    part = NULL;        /* ??? what should this be set to? */
   }
 
   printf("part(start=%llu, end=%llu, length=%llu)\n",
@@ -659,6 +660,7 @@ int main(int argc, char **argv) {
   snap_to_boundaries(&new_geom, &part_geom, disk, range_start, range_end);
 
   printd(3, "ped_file_system_open()\n");
+  /* ??? part might be NULL */
   fs = ped_file_system_open(&part->geom);
   if (!fs) {
     return 1;
