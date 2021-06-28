@@ -216,12 +216,12 @@ static int get_device(char *dev) {
 }
 
 static void resize_handler(PedTimer *timer, void *ctx) {
-  int draw_this_time;
   TimerContext *tctx = (TimerContext *)ctx;
 
   if (opts.verbose == -1) {
     return;
-  } else if (opts.verbose < 3) {
+  }
+  if (opts.verbose < 3) {
     fprintf(stdout, ".");
     fflush(stdout);
     return;
@@ -230,21 +230,16 @@ static void resize_handler(PedTimer *timer, void *ctx) {
   if (tctx->last_update != timer->now && timer->now > timer->start) {
     tctx->predicted_time_left = timer->predicted_end - timer->now;
     tctx->last_update = timer->now;
-    draw_this_time = 1;
-  } else {
-    draw_this_time = 1;
   }
 
-  if (draw_this_time) {
-    printf("\r                                                            \r");
-    if (timer->state_name) {
-      printf("%s... ", timer->state_name);
-    }
-    printf("%0.f%%\t(time left %.2ld:%.2ld)", 100.0 * timer->frac,
-           tctx->predicted_time_left / 60, tctx->predicted_time_left % 60);
-
-    fflush(stdout);
+  printf("\r                                                            \r");
+  if (timer->state_name) {
+    printf("%s... ", timer->state_name);
   }
+  printf("%0.f%%\t(time left %.2ld:%.2ld)", 100.0 * timer->frac,
+         tctx->predicted_time_left / 60, tctx->predicted_time_left % 60);
+
+  fflush(stdout);
 }
 
 static PedExceptionOption option_get_next(PedExceptionOption options,
