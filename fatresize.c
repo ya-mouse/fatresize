@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <parted/debug.h>
@@ -159,7 +160,8 @@ static int get_partnum(char *dev) {
   return pnum ? pnum : 1;
 }
 
-static int get_device(char *dev) {
+/* ??? return value is never used */
+static bool get_device(char *dev) {
   PedDevice *peddev = NULL;
   char *devname;
   char *p;
@@ -169,16 +171,16 @@ static int get_device(char *dev) {
   opts.fullpath = strdup(dev);
 
   if (stat(dev, &st) == -1) {
-    return 0;
+    return false;
   }
   if (!(S_ISBLK(st.st_mode) && !S_ISCHR(st.st_mode))) {
     probe_device(&peddev, dev);
     if (!peddev) {
-      return 0;
+      return false;
     }
     ped_device_destroy(peddev);
     opts.device = strdup(dev);
-    return 1;
+    return true;
   }
 
   /* create devname as dev, without trailing digits */
@@ -204,7 +206,7 @@ static int get_device(char *dev) {
 
     if (!peddev) {
       free(devname);
-      return 0;
+      return false;
     }
   } else {
     opts.pnum = get_partnum(devname);
@@ -212,7 +214,7 @@ static int get_device(char *dev) {
   ped_device_destroy(peddev);
   opts.device = devname;
 
-  return 1;
+  return true;
 }
 
 static void resize_handler(PedTimer *timer, void *ctx) {
@@ -428,7 +430,8 @@ static PedConstraint *constraint_intersect_and_destroy(PedConstraint *a,
   return result;
 }
 
-static int partition_warn_busy(PedPartition *part) {
+/* ??? the name should reflect that the return value indicates whether the partition is NOT busy */
+static bool partition_warn_busy(PedPartition *part) {
   char *path = ped_partition_get_path(part);
 
   if (ped_partition_is_busy(part)) {
@@ -437,11 +440,11 @@ static int partition_warn_busy(PedPartition *part) {
                          "before you modify it with Parted."),
                         path);
     free(path);
-    return 0;
+    return false;
   }
 
   free(path);
-  return 1;
+  return true;
 }
 
 int main(int argc, char **argv) {
