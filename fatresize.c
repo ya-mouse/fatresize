@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <parted/debug.h>
@@ -50,8 +51,8 @@
 #define MAX_SIZE_STR "max"
 
 static struct {
-  unsigned char *fullpath;
-  unsigned char *device;
+  char *fullpath;
+  char *device;
   int pnum;
   PedSector size;
   int verbose;
@@ -112,10 +113,6 @@ static PedSector get_size(char *s) {
     usage(1);
   }
 
-  if (!*suffix) {
-    return size;
-  }
-
   if (strlen(suffix) == 2 && suffix[1] == 'i') {
     prefix_kind = 1024;
   } else if (strlen(suffix) > 1) {
@@ -125,10 +122,14 @@ static PedSector get_size(char *s) {
   switch (*suffix) {
     case 'G':
       size *= prefix_kind;
+      /* fall through */
     case 'M':
       size *= prefix_kind;
+      /* fall through */
     case 'k':
       size *= prefix_kind;
+      /* fall through */
+    case '\0':
       break;
     default:
       usage(1);
@@ -151,18 +152,17 @@ static int get_partnum(char *dev) {
   int pnum;
   char *p;
 
-  p = dev + strlen(dev) - 1;
-  while (*p && isdigit(*p) && *p != '/') {
-    p--;
+  /* ??? what if whole name is made up of digits? */
+  for (p = dev + strlen(dev); p > dev && isdigit(p[-1]); p--) {
   }
 
-  pnum = atoi(p + 1);
+  pnum = atoi(p);
   return pnum ? pnum : 1;
 }
 
-static int get_device(char *dev) {
+/* ??? return value is never used */
+static bool get_device(char *dev) {
   PedDevice *peddev = NULL;
-  int len;
   char *devname;
   char *p;
   struct stat st;
@@ -171,31 +171,32 @@ static int get_device(char *dev) {
   opts.fullpath = strdup(dev);
 
   if (stat(dev, &st) == -1) {
-    return 0;
+    return false;
   }
   if (!(S_ISBLK(st.st_mode) && !S_ISCHR(st.st_mode))) {
     probe_device(&peddev, dev);
     if (!peddev) {
-      return 0;
+      return false;
     }
     ped_device_destroy(peddev);
     opts.device = strdup(dev);
-    return 1;
+    return true;
   }
 
-  len = strlen(dev);
-  p = dev + len - 1;
-  while (*p && isdigit(*p) && *p != '/') {
+  /* create devname as dev, without trailing digits */
+
+  for (p = dev + strlen(dev); p > dev && isdigit(p[-1]); p--) {
+  }
+
+  /* if the resulting name ends in <digit>p, strip the "p".  Why? */
+  if (p-dev > 2 && isdigit(p[-2]) && p[-1] == 'p') {
     p--;
   }
 
-  devname = malloc(len);
-  strncpy(devname, dev, p - dev + 1);
+  /* ??? what if no name is left? */
+  devname = malloc(p - dev + 1);
+  memcpy(devname, dev, p - dev);
   devname[p - dev + 1] = '\0';
-
-  if (p-dev > 2 && devname[p-dev] == 'p' && isdigit(devname[p-dev-1])) {
-    devname[p-dev] = '\0';
-  }
 
   peddev = NULL;
   probe_device(&peddev, devname);
@@ -205,7 +206,7 @@ static int get_device(char *dev) {
 
     if (!peddev) {
       free(devname);
-      return 0;
+      return false;
     }
   } else {
     opts.pnum = get_partnum(devname);
@@ -213,16 +214,16 @@ static int get_device(char *dev) {
   ped_device_destroy(peddev);
   opts.device = devname;
 
-  return 1;
+  return true;
 }
 
 static void resize_handler(PedTimer *timer, void *ctx) {
-  int draw_this_time;
   TimerContext *tctx = (TimerContext *)ctx;
 
   if (opts.verbose == -1) {
     return;
-  } else if (opts.verbose < 3) {
+  }
+  if (opts.verbose < 3) {
     fprintf(stdout, ".");
     fflush(stdout);
     return;
@@ -231,21 +232,16 @@ static void resize_handler(PedTimer *timer, void *ctx) {
   if (tctx->last_update != timer->now && timer->now > timer->start) {
     tctx->predicted_time_left = timer->predicted_end - timer->now;
     tctx->last_update = timer->now;
-    draw_this_time = 1;
-  } else {
-    draw_this_time = 1;
   }
 
-  if (draw_this_time) {
-    printf("\r                                                            \r");
-    if (timer->state_name) {
-      printf("%s... ", timer->state_name);
-    }
-    printf("%0.f%%\t(time left %.2ld:%.2ld)", 100.0 * timer->frac,
-           tctx->predicted_time_left / 60, tctx->predicted_time_left % 60);
-
-    fflush(stdout);
+  printf("\r                                                            \r");
+  if (timer->state_name) {
+    printf("%s... ", timer->state_name);
   }
+  printf("%0.f%%\t(time left %.2ld:%.2ld)", 100.0 * timer->frac,
+         tctx->predicted_time_left / 60, tctx->predicted_time_left % 60);
+
+  fflush(stdout);
 }
 
 static PedExceptionOption option_get_next(PedExceptionOption options,
@@ -434,7 +430,8 @@ static PedConstraint *constraint_intersect_and_destroy(PedConstraint *a,
   return result;
 }
 
-static int partition_warn_busy(PedPartition *part) {
+/* ??? the name should reflect that the return value indicates whether the partition is NOT busy */
+static bool partition_warn_busy(PedPartition *part) {
   char *path = ped_partition_get_path(part);
 
   if (ped_partition_is_busy(part)) {
@@ -443,18 +440,18 @@ static int partition_warn_busy(PedPartition *part) {
                          "before you modify it with Parted."),
                         path);
     free(path);
-    return 0;
+    return false;
   }
 
   free(path);
-  return 1;
+  return true;
 }
 
 int main(int argc, char **argv) {
   int opt;
 
   PedDevice *dev;
-  PedDisk *disk;
+  PedDisk *disk = NULL;	/* initialized to avoid GCC warning */
   PedPartition *part;
   PedTimer *timer = NULL;
 
@@ -576,8 +573,9 @@ int main(int argc, char **argv) {
 
     if (strncmp(part->fs_type->name, "fat", 3)) {
       ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
-                          "%s is not valid FAT16/FAT32 partition.",
-                          opts.fullpath);
+                          "%s is %s, not a valid FAT16/FAT32 partition.",
+                          opts.fullpath,
+                          part->fs_type->name);
       return 1;
     }
 
@@ -590,6 +588,7 @@ int main(int argc, char **argv) {
     if (!ped_geometry_init(&part_geom, dev, 0, dev->length)) {
       return 1;
     }
+    part = NULL;        /* ??? what should this be set to? */
   }
 
   printf("part(start=%llu, end=%llu, length=%llu)\n",
@@ -659,6 +658,7 @@ int main(int argc, char **argv) {
   snap_to_boundaries(&new_geom, &part_geom, disk, range_start, range_end);
 
   printd(3, "ped_file_system_open()\n");
+  /* ??? part might be NULL */
   fs = ped_file_system_open(&part->geom);
   if (!fs) {
     return 1;
