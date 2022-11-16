@@ -631,8 +631,8 @@ int main(int argc, char **argv) {
 
   end = part_geom.start + opts.size / dev->sector_size;
   printd(3, "ped_unit_parse(%llu)\n", end);
-  old_str = ped_unit_format(dev, part_geom.end);
-  def_str = ped_unit_format(dev, end);
+  old_str = ped_unit_format_custom(dev, part_geom.end, PED_UNIT_SECTOR);
+  def_str = ped_unit_format_custom(dev, end, PED_UNIT_SECTOR);
   if (!strcmp(old_str, def_str)) {
     range_end = ped_geometry_new(dev, part_geom.end, 1);
     if (!range_end) {
