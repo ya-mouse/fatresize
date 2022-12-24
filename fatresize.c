@@ -207,8 +207,8 @@ static int get_device(char *dev) {
       free(devname);
       return 0;
     }
-  } else {
-    opts.pnum = get_partnum(devname);
+  } else if (opts.pnum < 0) {
+    opts.pnum = get_partnum(dev);
   }
   ped_device_destroy(peddev);
   opts.device = devname;
@@ -620,6 +620,11 @@ int main(int argc, char **argv) {
   if (opts.size == LLONG_MAX) {
     opts.size = constraint->max_size * dev->sector_size;
     ped_constraint_destroy(constraint);
+  }
+  if (opts.size >= dev->sector_size * part_geom.length) {
+     printf("Specified size (%llu) equals or exceeds partition size (%llu)\n",
+            opts.size, dev->sector_size * part_geom.length);
+     opts.size = (dev->sector_size * (part_geom.length - 1));
   }
 
   start = part_geom.start;
