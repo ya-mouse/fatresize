@@ -536,7 +536,7 @@ int main(int argc, char **argv) {
   printd(0, "%s (%s)\n", PACKAGE_STRING, BUILD_DATE);
 
   if (!opts.device) {
-    fprintf(stderr, "You must specify exactly one existing device.\n");
+    fprintf(stderr, "You must specify exactly one existing device you have permissions to access.\n");
     return 1;
   } else if (!opts.size && !opts.info) {
     fprintf(stderr, "You must specify new size.\n");
