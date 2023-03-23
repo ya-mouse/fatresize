@@ -157,7 +157,7 @@ static int get_partnum(char *dev) {
   }
 
   pnum = atoi(p + 1);
-  return pnum ? pnum : 1;
+  return pnum ? pnum : -1;
 }
 
 static int get_device(char *dev) {
@@ -208,7 +208,12 @@ static int get_device(char *dev) {
       return 0;
     }
   } else {
-    opts.pnum = get_partnum(devname);
+    int pnum = get_partnum(devname);
+    if (pnum < 0)
+       pnum = get_partnum(dev);
+    if (pnum < 0)
+      pnum = 1; /* Original code returned 1 in this case */
+    opts.pnum = pnum;
   }
   ped_device_destroy(peddev);
   opts.device = devname;
