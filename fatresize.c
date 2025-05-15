@@ -22,6 +22,8 @@
 #define DEBUG 1
 #endif
 
+#include "config.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
@@ -36,8 +38,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-
-#include "config.h"
 
 #define FAT_ASSERT(cond, action) \
   do {                           \
