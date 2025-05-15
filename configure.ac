@@ -29,7 +29,6 @@ AC_CHECK_FUNCS([memset strtoll])
 
 # Check for LFS
 AC_SYS_LARGEFILE
-CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=${ac_cv_sys_file_offset_bits}"
 
 dnl libparted
 # hack
