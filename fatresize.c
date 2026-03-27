@@ -189,7 +189,7 @@ static int get_device(char *dev) {
     p--;
   }
 
-  devname = malloc(len);
+  devname = malloc(len + 1);
   strncpy(devname, dev, p - dev + 1);
   devname[p - dev + 1] = '\0';
 
@@ -200,7 +200,8 @@ static int get_device(char *dev) {
   peddev = NULL;
   probe_device(&peddev, devname);
   if (!peddev) {
-    strcpy(devname, dev);
+    strncpy(devname, dev, len + 1);
+    devname[len] = '\0';
     probe_device(&peddev, devname);
 
     if (!peddev) {
