@@ -451,6 +451,31 @@ static int partition_warn_busy(PedPartition *part) {
   return 1;
 }
 
+int parse_device_spec(char *devname)
+{
+		char *partno = devname + strlen(devname) - 1; /* last character */
+		while (*partno && isdigit(*partno)) {
+				/* Don't try to go *before* the first character */
+				if (partno == devname) {
+						ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
+																"Bugous device name!\n");
+						return -1;
+				}
+				partno--;
+		}
+		partno++;
+		if ((opts.pnum > 0) && (strlen(partno) > 0)) {
+				ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
+														"Don't specify partition number with -n and in device name!\n");
+				return -1;
+		}
+		if (strlen(partno) > 0)
+				opts.pnum = atoi(partno);
+		opts.fullpath = strndup(devname,strlen(devname));
+		opts.device = strndup(devname,strlen(devname)-strlen(partno));
+		return 0;
+}
+
 int main(int argc, char **argv) {
   int opt;
 
@@ -492,7 +517,8 @@ int main(int argc, char **argv) {
     switch (opt) {
       case 1:
         if (!opts.device) {
-          get_device(optarg);
+						if (parse_device_spec(optarg) == -1)
+								exit(1);
         } else {
           usage(1);
         }
@@ -577,8 +603,8 @@ int main(int argc, char **argv) {
 
     if (strncmp(part->fs_type->name, "fat", 3)) {
       ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
-                          "%s is not valid FAT16/FAT32 partition.",
-                          opts.fullpath);
+                          "%s is not a valid FAT16/FAT32 partition. (%s)",
+                          opts.fullpath, part->fs_type->name);
       return 1;
     }
 
