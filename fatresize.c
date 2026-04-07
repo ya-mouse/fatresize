@@ -209,7 +209,7 @@ static int get_device(char *dev) {
       return 0;
     }
   } else {
-    opts.pnum = get_partnum(devname);
+    opts.pnum = get_partnum(dev);
   }
   ped_device_destroy(peddev);
   opts.device = devname;
